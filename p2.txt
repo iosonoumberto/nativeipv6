@@ -1,0 +1,369 @@
+<configuration-text>
+## Last changed: 2022-09-16 07:22:59 PDT
+version 18.4R1.8;
+groups {
+    re0 {
+        system {
+            host-name p2;
+            backup-router 10.102.175.254;
+        }
+        interfaces {
+            fxp0 {
+                unit 0 {
+                    family inet {
+                        address 10.102.161.170/20;
+                    }
+                }
+            }
+        }
+    }
+    re1 {
+        system {
+            host-name p21;
+            backup-router 10.102.175.254;
+        }
+        interfaces {
+            fxp0 {
+                unit 0 {
+                    family inet {
+                        address 10.102.161.18/20;
+                    }
+                }
+            }
+        }
+    }
+    global {
+        system {
+            login {
+                class wheel {
+                    permissions snmp;
+                }
+                user regress {
+                    uid 928;
+                    class superuser;
+                    shell csh;
+                    authentication {
+                        encrypted-password "$1$kPU..$w.4FGRAGanJ8U4Yq6sbj7.";
+                    }
+                }
+                user remote {
+                    uid 2000;
+                    class super-user;
+                }
+            }
+            root-authentication {
+                encrypted-password "$1$ZUlES4dp$OUwWo1g7cLoV/aMWpHUnC/";
+            }
+            services {
+                finger;
+                ftp;
+                rlogin;
+                ssh {
+                    root-login allow;
+                }
+                telnet;
+                xnm-clear-text;
+            }
+            domain-name englab.juniper.net;
+            domain-search [ englab.juniper.net juniper.net jnpr.net spglab.juniper.net ];
+            time-zone America/Los_Angeles;
+            debugger-on-break;
+            dump-on-panic;
+            authentication-order [ password radius ];
+            name-server {
+                10.102.149.51;
+                10.102.149.52;
+            }
+            radius-server {
+                192.168.69.162 secret "$9$iHfz9Cu0BRQznCApIRSreWxNVw2GjkKM4JGimP";
+                192.168.64.10 secret "$9$TQ/t1IcSrKAt0IRheK8X7VYgaZDm5zNdiqmTn6";
+                192.168.4.240 secret "$9$GqUqf3nCApOPfQn690ORhSeWL7-boZDylsgoGHk";
+            }
+            syslog {
+                host log {
+                    kernel info;
+                    any notice;
+                    pfe info;
+                    interactive-commands any;
+                }
+                file messages {
+                    kernel info;
+                    any notice;
+                    authorization info;
+                    pfe info;
+                    archive world-readable;
+                }
+                file security {
+                    interactive-commands any;
+                    archive world-readable;
+                }
+            }
+            processes {
+                routing enable;
+                ntp enable;
+                management enable;
+                watchdog enable;
+                snmp enable;
+                inet-process enable;
+                mib-process enable;
+            }
+            ntp {
+                boot-server 172.21.200.60;
+                server 172.21.200.60;
+                server 172.29.131.60;
+                server 172.29.135.60;
+            }
+        }
+        chassis {
+            dump-on-panic;
+        }
+        snmp {
+            location "Systest lab";
+            contact "Jay Lloyd";
+            interface fxp0.0;
+            community public {
+                authorization read-only;
+            }
+            community private {
+                authorization read-write;
+            }
+        }
+        routing-options {
+            static {
+                /* corperate and alpha net */
+                route 172.16.0.0/12 {
+                    next-hop 10.102.175.254;
+                    retain;
+                    no-readvertise;
+                }
+                /* eng lab nets */
+                route 192.168.0.0/16 {
+                    next-hop 10.102.175.254;
+                    retain;
+                    no-readvertise;
+                }
+                route 10.0.0.0/8 {
+                    next-hop 10.102.175.254;
+                    retain;
+                    no-readvertise;
+                }
+                /* ntp server */
+                route 66.129.255.62/32 {
+                    next-hop 10.102.175.254;
+                    retain;
+                    no-readvertise;
+                }
+            }
+        }
+    }
+}
+apply-groups global;
+system {
+    services {
+        netconf {
+            ssh;
+        }
+    }
+    host-name p2;
+    ports {
+        console log-out-on-disconnect;
+    }
+}
+chassis {
+    aggregated-devices {
+        ethernet {
+            device-count 100;
+        }
+    }
+}
+interfaces {
+    ge-0/0/0 {
+        gigether-options {
+            802.3ad ae14;
+        }
+    }
+    ge-0/0/1 {
+        gigether-options {
+            802.3ad ae14;
+        }
+    }
+    ge-0/0/2 {
+        gigether-options {
+            802.3ad ae24;
+        }
+    }
+    ge-0/0/3 {
+        gigether-options {
+            802.3ad ae24;
+        }
+    }
+    ge-0/0/4 {
+        gigether-options {
+            802.3ad ae34;
+        }
+    }
+    ge-0/0/5 {
+        gigether-options {
+            802.3ad ae34;
+        }
+    }
+    ge-0/0/6 {
+        gigether-options {
+            802.3ad ae45;
+        }
+    }
+    ge-0/0/7 {
+        gigether-options {
+            802.3ad ae45;
+        }
+    }
+    ge-0/0/8 {
+        gigether-options {
+            802.3ad ae46;
+        }
+    }
+    ge-0/0/9 {
+        gigether-options {
+            802.3ad ae46;
+        }
+    }
+    ae14 {
+        aggregated-ether-options {
+            lacp {
+                active;
+                periodic fast;
+            }
+        }
+        unit 0 {
+            family inet6;
+            family mpls;
+        }
+    }
+    ae24 {
+        aggregated-ether-options {
+            lacp {
+                active;
+                periodic fast;
+            }
+        }
+        unit 0 {
+            family inet6;
+            family mpls;
+        }
+    }
+    ae34 {
+        aggregated-ether-options {
+            lacp {
+                active;
+                periodic fast;
+            }
+        }
+        unit 0 {
+            family inet6;
+            family mpls;
+        }
+    }
+    ae45 {
+        aggregated-ether-options {
+            lacp {
+                active;
+                periodic fast;
+            }
+        }
+        unit 0 {
+            family inet6;
+            family mpls;
+        }
+    }
+    ae46 {
+        aggregated-ether-options {
+            lacp {
+                active;
+                periodic fast;
+            }
+        }
+        unit 0 {
+            family inet6;
+            family mpls;
+        }
+    }
+    fxp0 {
+        unit 0 {
+            family inet {
+                address 10.93.19.121/20;
+            }
+        }
+    }
+    lo0 {
+        unit 0 {
+            family inet {
+                address 4.4.4.4/32;
+            }
+            family inet6 {
+                address 2003::4/128;
+            }
+        }
+    }
+}
+policy-options {
+    policy-statement lb {
+        then {
+            load-balance per-packet;
+        }
+    }
+}
+routing-options {
+    forwarding-table {
+        export lb;
+    }
+}
+protocols {
+    router-advertisement {
+        interface ae14.0;
+        interface ae24.0;
+        interface ae34.0;
+        interface ae45.0;
+        interface ae46.0;
+    }
+    ldp {
+        interface ae14.0;
+        interface ae24.0;
+        interface ae34.0;
+        interface ae45.0;
+        interface ae46.0;
+        interface lo0.0;
+        family {
+            inet6;
+        }
+    }
+    ospf3 {
+        area 0.0.0.0 {
+            interface ae14.0 {
+                interface-type p2p;
+            }
+            interface ae24.0 {
+                interface-type p2p;
+            }
+            interface ae34.0 {
+                interface-type p2p;
+            }
+            interface ae45.0 {
+                interface-type p2p;
+            }
+            interface ae46.0 {
+                interface-type p2p;
+            }
+            interface lo0.0 {
+                passive;
+            }
+        }
+    }
+    mpls {
+        interface ae14.0;
+        interface ae24.0;
+        interface ae34.0;
+        interface ae45.0;
+        interface ae46.0;
+    }
+}
+</configuration-text>
